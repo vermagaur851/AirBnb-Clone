@@ -11,7 +11,6 @@ A full-stack MERN application that replicates the core functionalities of Airbnb
 - [Usage](#usage)
 - [Project Structure](#project-structure)
 - [API Endpoints](#api-endpoints)
-- [Future Enhancements](#future-enhancements)
 - [Contributing](#contributing)
 
 ## Introduction
@@ -122,9 +121,5 @@ DELETE /api/listings/: Delete a property listing (Host only).
 ### Bookings
 - POST /api/bookings: Create a new booking.
 - GET /api/bookings: Get all bookings for the logged-in user.
-## Future Enhancements
-- Implement advanced search filters (price range, amenities).
-- Add a review and rating system for properties.
-- Integrate payment gateway for handling bookings.
 ## Contributing
 ##### Contributions are welcome! Please fork this repository and submit a pull request for any improvements or bug fixes.

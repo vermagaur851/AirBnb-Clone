@@ -20,11 +20,11 @@ The Airbnb Clone is a web application built using the MERN stack (MongoDB, Expre
 
 ## Features
 
-- User Authentication: JWT-based secure login/signup.
-- Property Listings: Users can view property listings, filter, and search for properties.
-- Booking System: Users can book properties and manage their bookings.
-- Host Functionality: Hosts can list properties, update details, and manage their listings.
-- Responsive Design: Fully responsive UI built with Tailwind CSS.
+- <strong>User Authentication:</strong> JWT-based secure login/signup.
+- <strong>Property Listings:</strong> Users can view property listings, filter, and search for properties.
+- <strong>Booking System:</strong> Users can book properties and manage their bookings.
+- <strong>Host Functionality:</strong> Hosts can list properties, update details, and manage their listings.
+- <strong>Responsive Design:</strong> Fully responsive UI built with Tailwind CSS.
 
 ## Tech Stack
 

@@ -4,15 +4,21 @@ import mongoose from "mongoose";
 import dotenv from "dotenv";
 import { UserModel } from "./models/user.model.js";
 import bcrypt from "bcryptjs";
+import { fileURLToPath } from "url";
 import jwt from "jsonwebtoken";
 import cookieParser from "cookie-parser";
+import imageDownloader from "image-downloader";
+import path from "path";
 
 dotenv.config();
 
 const app = express();
 const port = 3000;
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 app.use(cookieParser());
+app.use("/static", express.static(__dirname+'/static'));
 app.use(
   cors({
     credentials: true,
@@ -91,6 +97,16 @@ app.get("/profile", (req, res) => {
 
 app.post("/logout", (req, res) => {
   res.cookie("token", "").json(true);
+});
+
+app.post("/upload-by-link", async (req, res) => {
+  const { Link } = req.body;
+  const newName = Date.now() + ".jpg";
+  await imageDownloader.image({
+    url: Link,
+    dest: path.join(__dirname, "/static/uploads", newName),
+  });
+  res.json(path.join(newName));
 });
 
 app.listen(port, () => console.log(`app is listening at port: ${port}!`));

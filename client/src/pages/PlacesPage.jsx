@@ -43,6 +43,25 @@ function PlacesPage() {
     setPhotoLink("");
   }
 
+  async function uploadPhoto(e) {
+    const files = e.target.files;
+    const data = new FormData();
+    data.set("photos", files);
+    for (let i = 0; i < files.length; i++) {
+      data.append("photos", files[i]);
+    }
+    await axios
+      .post("/upload", data, {
+        headers: { "Content-type": "multipart/form-data" },
+      })
+      .then((response) => {
+        const { data: filename } = response;
+        setPhotos((prev) => {
+          return [...prev, filename];
+        });
+      });
+  }
+
   return (
     <div className="min-h-screen">
       {action !== "new" && (
@@ -77,13 +96,15 @@ function PlacesPage() {
               "Should be short and catchy as in advertisement"
             )}
             <input
+              className="border border-gray-300 bg-gray-100"
               type="text"
               value={title}
               onChange={(ev) => setTitle(ev.target.value)}
-              placeholder="title, for example : My lovely home"
+              placeholder="eg. My lovely home"
             />
             {preInput("Address", "Address to your place")}
             <input
+              className="border border-gray-300 bg-gray-100"
               type="text"
               placeholder="address"
               value={address}
@@ -92,6 +113,7 @@ function PlacesPage() {
             {preInput("Photos", "more = better")}
             <div className="flex gap-2">
               <input
+                className="border border-gray-300 bg-gray-100"
                 type="text"
                 placeholder={`Add photo using a link ....jpg`}
                 value={photoLink}
@@ -104,18 +126,20 @@ function PlacesPage() {
                 Add&nbsp;photo
               </button>
             </div>
+
             <div className="mt-2 grid gap-2 grid-cols-3 md:grid-cols-4 lg:grid-cols-6">
               {photos.length > 0 &&
-                photos.map((link,index) => (
-                  <div key={index} >
+                photos.map((link, index) => (
+                  <div key={index} className="flex h-32">
                     <img
                       src={`http://localhost:3000/static/uploads/${link}`}
                       alt={link}
-                      className="rounded-2xl "
+                      className="rounded-2xl w-full object-cover"
                     />
                   </div>
                 ))}
-              <button className="flex gap-1 justify-center items-center border bg-transparent rounded-2xl p-2 text-2xl text-gray-600 ">
+              <label className="h-32 cursor-pointer flex gap-1 justify-center items-center border bg-transparent rounded-2xl p-2 text-2xl text-gray-600 ">
+                <input onChange={uploadPhoto} type="file" className="hidden" />
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   fill="none"
@@ -131,11 +155,11 @@ function PlacesPage() {
                   />
                 </svg>
                 Upload
-              </button>
+              </label>
             </div>
-            {preInput("Description", "Description of th Photos")}
+            {preInput("Description", "Description of the Photos")}
             <textarea
-              className="min-h-40"
+              className="min-h-32 border border-gray-300 bg-gray-100"
               value={description}
               onChange={(ev) => setDescription(ev.target.value)}
             />
@@ -145,9 +169,10 @@ function PlacesPage() {
             </div>
             {preInput("Extra Info", "house rules, etc")}
             <textarea
-              className="min-h-40"
+              className="min-h-32 border border-gray-300 bg-gray-100"
               value={extraInfo}
               onChange={(ev) => setExtraInfo(ev.target.value)}
+              placeholder="Optional"
             />
             {preInput(
               "Check in&out time",

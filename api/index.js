@@ -9,6 +9,9 @@ import jwt from "jsonwebtoken";
 import cookieParser from "cookie-parser";
 import imageDownloader from "image-downloader";
 import path from "path";
+import multer from "multer";
+import fs from "fs";
+import { log } from "console";
 
 dotenv.config();
 
@@ -18,7 +21,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 app.use(cookieParser());
-app.use("/static", express.static(__dirname+'/static'));
+app.use("/static", express.static(__dirname + "/static"));
 app.use(
   cors({
     credentials: true,
@@ -37,7 +40,9 @@ try {
 app.post("/register", async (req, res) => {
   const { name, email, password } = req.body;
   const bcryptSalt = bcrypt.genSaltSync(10);
-  if (UserModel.findOne({ email })) {
+  const user = await UserModel.findOne({ email });
+  console.log(user);
+  if (user) {
     res.status(423).json("User already exists");
   } else {
     try {
@@ -107,6 +112,21 @@ app.post("/upload-by-link", async (req, res) => {
     dest: path.join(__dirname, "/static/uploads", newName),
   });
   res.json(path.join(newName));
+});
+
+const photoMiddleware = multer({ dest: "static/uploads" });
+app.post("/upload", photoMiddleware.array("photos", 100), (req, res) => {
+  const uploadedFiles = [];
+  for (let i = 0; i < req.files.length; i++) {
+    const { path, originalname } = req.files[i];
+    const parts = originalname.split(".");
+    const ext = parts[parts.length - 1];
+    const newpath = path + "." + ext;
+    fs.renameSync(path, newpath);
+    const data = newpath.split("uploads");
+    uploadedFiles.push(data[data.length - 1]);
+  }
+  res.json(uploadedFiles);
 });
 
 app.listen(port, () => console.log(`app is listening at port: ${port}!`));

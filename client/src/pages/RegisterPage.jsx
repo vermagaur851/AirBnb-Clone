@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, Navigate } from "react-router-dom";
 import axios from "axios";
 
 function RegisterPage() {
@@ -14,10 +14,11 @@ function RegisterPage() {
         email,
         password,
       });
-      alert('Registration Successfull. Now you can log in')
-      console.log(res);
+      alert("Registration Successfull. Now you can log in");
+      return <Navigate to={"/login"} />;
     } catch (error) {
-      alert(error.response.data)
+      alert(error.response.data);
+      return;
     }
   }
 

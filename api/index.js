@@ -2,6 +2,7 @@ import express from "express";
 import cors from "cors";
 import mongoose from "mongoose";
 import dotenv from "dotenv";
+import { PlaceModel } from "./models/places.model.js";
 import { UserModel } from "./models/user.model.js";
 import bcrypt from "bcryptjs";
 import { fileURLToPath } from "url";
@@ -11,7 +12,6 @@ import imageDownloader from "image-downloader";
 import path from "path";
 import multer from "multer";
 import fs from "fs";
-import { log } from "console";
 
 dotenv.config();
 
@@ -127,6 +127,46 @@ app.post("/upload", photoMiddleware.array("photos", 100), (req, res) => {
     uploadedFiles.push(data[data.length - 1]);
   }
   res.json(uploadedFiles);
+});
+
+app.post("/places", async (req, res) => {
+  const { token } = req.cookies;
+  const {
+    title,
+    address,
+    photos,
+    description,
+    perks,
+    extraInfo,
+    checkIn,
+    checkOut,
+    maxGuests,
+  } = req.body;
+  jwt.verify(token, process.env.JWT_SECRET, {}, async (err, userData) => {
+    if (err) throw err;
+    const placeDocs = await PlaceModel.create({
+      owner: userData.id,
+      title,
+      address,
+      photos,
+      description,
+      perks,
+      extraInfo,
+      checkIn,
+      checkOut,
+      maxGuests,
+    });
+    res.json(placeDocs);
+  });
+});
+
+app.get("/places", async (req, res) => {
+  const { token } = req.cookies;
+  jwt.verify(token, process.env.JWT_SECRET, {}, async (err, userData) => {
+    if (err) throw err;
+    const { id } = userData;
+    res.json(await PlaceModel.find({ owner: id }));
+  });
 });
 
 app.listen(port, () => console.log(`app is listening at port: ${port}!`));

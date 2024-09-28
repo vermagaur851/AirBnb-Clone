@@ -13,7 +13,6 @@ A full-stack MERN application that replicates the core functionalities of Airbnb
 - [API Endpoints](#api-endpoints)
 - [Future Enhancements](#future-enhancements)
 - [Contributing](#contributing)
-- [License](#license)
 
 ## Introduction
 
@@ -59,18 +58,19 @@ To run this project locally, follow these steps:
 
 ### Clone the repository
 ```bash
-git clone [https://github.com/vermagaur851/AirBnb-Clone.git](https://github.com/vermagaur851/AirBnb-Clone)
+git clone https://github.com/vermagaur851/AirBnb-Clone.git
 cd airbnb-clone
 ```
 ### Install dependencies
 #### Install backend dependencies
 ```
-cd backend
+cd /api
 npm install
 ```
 #### Install frontend dependencies
 ```
-cd ../frontend
+cd ..
+cd ../client
 npm install
 ```
 ### Environment Variables
@@ -84,13 +84,13 @@ CLOUDINARY_API_SECRET=your_api_secret
 ### Running the Application
 #### Start the backend server
 ```
-cd backend
+cd /api
 npm start
 ```
 #### Start the frontend server
 ```
-cd ../frontend
-npm start
+cd ../client
+npm run dev
 ```
 ## Usage
 ### As a User

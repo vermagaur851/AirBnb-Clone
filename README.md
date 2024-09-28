@@ -59,7 +59,7 @@ To run this project locally, follow these steps:
 ### Clone the repository
 ```bash
 git clone https://github.com/vermagaur851/AirBnb-Clone.git
-cd airbnb-clone
+cd Airbnb-Clone
 ```
 ### Install dependencies
 #### Install backend dependencies
@@ -69,7 +69,6 @@ npm install
 ```
 #### Install frontend dependencies
 ```
-cd ..
 cd ../client
 npm install
 ```
@@ -85,7 +84,7 @@ CLOUDINARY_API_SECRET=your_api_secret
 #### Start the backend server
 ```
 cd /api
-npm start
+npm run start
 ```
 #### Start the frontend server
 ```

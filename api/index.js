@@ -134,7 +134,7 @@ app.post("/places", async (req, res) => {
   const {
     title,
     address,
-    photos: pic,
+    photos,
     description,
     perks,
     extraInfo,
@@ -143,14 +143,8 @@ app.post("/places", async (req, res) => {
     maxGuests,
   } = req.body;
 
-  const photos = [];
-  pic.forEach((element) => {
-    photos.push(element[0]);
-  });
-
   jwt.verify(token, process.env.JWT_SECRET, {}, async (err, userData) => {
     if (err) throw err;
-    console.log(photos);
     const placeDocs = await PlaceModel.create({
       owner: userData.id,
       title,
@@ -197,6 +191,7 @@ app.put("/places", async (req, res) => {
     maxGuests,
   } = req.body;
 
+
   jwt.verify(token, process.env.JWT_SECRET, {}, async (err, userData) => {
     if (err) throw err;
     const placeDocs = await PlaceModel.findById(id);
@@ -212,7 +207,7 @@ app.put("/places", async (req, res) => {
         checkOut,
         maxGuests,
       });
-      placeDocs.save();
+      await placeDocs.save();
       res.json("ok");
     }
   });

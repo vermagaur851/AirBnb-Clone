@@ -27,7 +27,7 @@ function PlacesFormPage() {
         const { data } = response;
         setTitle(data.title);
         setAddress(data.address);
-        setPhotos(data.photos);
+        setPhotos(...data.photos);
         setDescription(data.description);
         setPerks(data.perks);
         setExtraInfo(data.extraInfo);
@@ -77,8 +77,7 @@ function PlacesFormPage() {
       setRedirect(true);
     } else {
       // new place
-      const { data } = await axios.post("/places", placeData);
-      console.log(data);
+      await axios.post("/places", placeData);
       setRedirect(true);
     }
   }
@@ -163,7 +162,7 @@ function PlacesFormPage() {
           </div>
         </div>
         <div>
-          <button className="primary my-4">Save</button>
+          <button onClick={savePlace} className="primary my-4">Save</button>
         </div>
       </form>
     </div>

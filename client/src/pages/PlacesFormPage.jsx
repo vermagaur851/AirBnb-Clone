@@ -1,13 +1,13 @@
-import React from "react";
+import React, { useEffect } from "react";
 import PhotoUploader from "../components/PhotoUploader";
 import { useState } from "react";
 import Perks from "../components/Perks";
 import AccountNav from "../components/AccountNav";
 import { Navigate, useParams } from "react-router-dom";
+import axios from "axios";
 
 function PlacesFormPage() {
-
-  const {id} = useParams();
+  const { id } = useParams();
   const [title, setTitle] = useState("");
   const [address, setAddress] = useState("");
   const [photos, setPhotos] = useState([]);
@@ -18,6 +18,25 @@ function PlacesFormPage() {
   const [checkOut, setCheckOut] = useState("");
   const [maxGuests, setMaxGuests] = useState(1);
   const [redirect, setRedirect] = useState(false);
+
+  useEffect(() => {
+    if (!id) {
+      return;
+    } else {
+      axios.get("/places/" + id).then((response) => {
+        const { data } = response;
+        setTitle(data.title);
+        setAddress(data.address);
+        setPhotos(data.photos);
+        setDescription(data.description);
+        setPerks(data.perks);
+        setExtraInfo(data.extraInfo);
+        setCheckOut(data.checkOut);
+        setCheckIn(data.checkIn);
+        setMaxGuests(data.maxGuests);
+      });
+    }
+  }, [id]);
 
   function inputHeader(text) {
     return <h2 className="text-2xl mt-4">{text}</h2>;
@@ -35,9 +54,10 @@ function PlacesFormPage() {
     );
   }
 
-  async function addNewPlace(e) {
+  async function savePlace(e) {
     e.preventDefault();
-    const { data } = await axios.post("places", {
+
+    const placeData = {
       title,
       address,
       photos,
@@ -47,8 +67,20 @@ function PlacesFormPage() {
       checkIn,
       checkOut,
       maxGuests,
-    });
-    setRedirect(true);
+    };
+    if (id) {
+      // update
+      await axios.put("/places", {
+        id,
+        ...placeData,
+      });
+      setRedirect(true);
+    } else {
+      // new place
+      const { data } = await axios.post("/places", placeData);
+      console.log(data);
+      setRedirect(true);
+    }
   }
 
   if (redirect) {
@@ -58,7 +90,7 @@ function PlacesFormPage() {
   return (
     <div>
       <AccountNav />
-      <form onSubmit={addNewPlace}>
+      <form onSubmit={savePlace}>
         {preInput("Title", "Should be short and catchy as in advertisement")}
         <input
           className="border border-gray-300 bg-gray-100"

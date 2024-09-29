@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Link, Navigate, useParams } from "react-router-dom";
-import PlacesFormPage from "./PlacesFormPage";
+import { Link} from "react-router-dom";
 import AccountNav from "../components/AccountNav";
 import axios from "axios";
 
@@ -10,7 +9,8 @@ function PlacesPage() {
     axios.get("/places").then(({ data }) => {
       setPlaces(data);
     });
-  }, []);
+  });
+  
 
   return (
     <div>
@@ -41,8 +41,8 @@ function PlacesPage() {
       </div>
       <div className="mt-4">
         {places.length > 0 &&
-          places.map((place) => (
-            <Link to={'/account/places/'+place?.id} className="cursor-pointer bg-gray-100 flex gap-4 p-4 rounded-2xl">
+          places.map((place,key) => (
+            <Link key={key} to={'/account/places/'+place?._id} className="cursor-pointer bg-gray-100 flex gap-4 p-4 rounded-2xl">
               <div className="w-32 h-32 bg-gray-300 grow shrink-0">
                 {place?.length > 0 && (
                   <img src={place.photos[0]} alt="photos" />

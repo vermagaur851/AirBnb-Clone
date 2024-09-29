@@ -134,7 +134,7 @@ app.post("/places", async (req, res) => {
   const {
     title,
     address,
-    photos,
+    photos: pic,
     description,
     perks,
     extraInfo,
@@ -142,8 +142,15 @@ app.post("/places", async (req, res) => {
     checkOut,
     maxGuests,
   } = req.body;
+
+  const photos = [];
+  pic.forEach((element) => {
+    photos.push(element[0]);
+  });
+
   jwt.verify(token, process.env.JWT_SECRET, {}, async (err, userData) => {
     if (err) throw err;
+    console.log(photos);
     const placeDocs = await PlaceModel.create({
       owner: userData.id,
       title,
@@ -156,6 +163,7 @@ app.post("/places", async (req, res) => {
       checkOut,
       maxGuests,
     });
+
     res.json(placeDocs);
   });
 });
@@ -166,6 +174,47 @@ app.get("/places", async (req, res) => {
     if (err) throw err;
     const { id } = userData;
     res.json(await PlaceModel.find({ owner: id }));
+  });
+});
+
+app.get("/places/:id", async (req, res) => {
+  const { id } = req.params;
+  res.json(await PlaceModel.findById(id));
+});
+
+app.put("/places", async (req, res) => {
+  const { token } = req.cookies;
+  const {
+    id,
+    title,
+    address,
+    photos,
+    description,
+    perks,
+    extraInfo,
+    checkIn,
+    checkOut,
+    maxGuests,
+  } = req.body;
+
+  jwt.verify(token, process.env.JWT_SECRET, {}, async (err, userData) => {
+    if (err) throw err;
+    const placeDocs = await PlaceModel.findById(id);
+    if (userData.id === placeDocs.owner.toString()) {
+      placeDocs.set({
+        title,
+        address,
+        photos,
+        description,
+        perks,
+        extraInfo,
+        checkIn,
+        checkOut,
+        maxGuests,
+      });
+      placeDocs.save();
+      res.json("ok");
+    }
   });
 });
 

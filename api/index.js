@@ -157,7 +157,6 @@ app.post("/places", async (req, res) => {
       checkOut,
       maxGuests,
     });
-
     res.json(placeDocs);
   });
 });
@@ -191,7 +190,6 @@ app.put("/places", async (req, res) => {
     maxGuests,
   } = req.body;
 
-
   jwt.verify(token, process.env.JWT_SECRET, {}, async (err, userData) => {
     if (err) throw err;
     const placeDocs = await PlaceModel.findById(id);
@@ -201,11 +199,11 @@ app.put("/places", async (req, res) => {
         address,
         photos,
         description,
+        maxGuests,
+        checkOut,
         perks,
         extraInfo,
         checkIn,
-        checkOut,
-        maxGuests,
       });
       await placeDocs.save();
       res.json("ok");

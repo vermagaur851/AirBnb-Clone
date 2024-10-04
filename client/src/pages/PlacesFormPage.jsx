@@ -27,7 +27,7 @@ function PlacesFormPage() {
         const { data } = response;
         setTitle(data.title);
         setAddress(data.address);
-        setPhotos(...data.photos);
+        setPhotos(data.photos);
         setDescription(data.description);
         setPerks(data.perks);
         setExtraInfo(data.extraInfo);
@@ -70,13 +70,23 @@ function PlacesFormPage() {
     };
     if (id) {
       // update
+      console.log('photos');
       await axios.put("/places", {
         id,
-        ...placeData,
+        title,
+        address,
+        photos,
+        description,
+        perks,
+        extraInfo,
+        checkIn,
+        checkOut,
+        maxGuests,
       });
       setRedirect(true);
     } else {
       // new place
+      console.log('videos');
       await axios.post("/places", placeData);
       setRedirect(true);
     }
@@ -157,12 +167,17 @@ function PlacesFormPage() {
               type="number"
               placeholder="5"
               value={maxGuests}
-              onChange={(ev) => setMaxGuests(ev.target.value)}
+              onChange={(ev) =>{
+                setMaxGuests(parseInt(ev.target.value));
+                console.log(maxGuests);
+              } }
             />
           </div>
         </div>
         <div>
-          <button onClick={savePlace} className="primary my-4">Save</button>
+          <button onClick={savePlace} className="primary my-4">
+            Save
+          </button>
         </div>
       </form>
     </div>

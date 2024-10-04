@@ -47,7 +47,7 @@ function PlacesPage() {
               className="cursor-pointer bg-gray-100 flex gap-4 p-4 rounded-2xl"
             >
               <div className="flex w-32 h-32 bg-gray-300 shrink-0">
-                {place && (
+                {place.photos.length && (
                   <img
                     src={
                       "http://localhost:3000/static/uploads" + place.photos[0]

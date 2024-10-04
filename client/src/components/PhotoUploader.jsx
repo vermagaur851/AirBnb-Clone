@@ -1,5 +1,6 @@
 import React from "react";
 import axios from "axios";
+import fs from 'fs';
 import { useState } from "react";
 
 function PhotoUploader({ photos, onChange }) {
@@ -10,14 +11,15 @@ function PhotoUploader({ photos, onChange }) {
       Link: photoLink,
     });
     onChange((prev) => {
-      return [...prev, filename];
+      for (let ind = 0; ind < filename.length; ind++) prev.push(filename[ind]);
+      return prev;
     });
     setPhotoLink("");
   }
 
-  function removePhoto(e, filename) {
+  async function removePhoto(e, filename) {
     e.preventDefault();
-    onChange([...photos.filter(photo => photo !== filename)]);
+    onChange([...photos.filter((photo) => photo !== filename)]);
   }
 
   function selectAsMainPhoto(e, filename) {
@@ -29,7 +31,6 @@ function PhotoUploader({ photos, onChange }) {
     e.preventDefault();
     const files = e.target.files;
     const data = new FormData();
-    data.set("photos", files);
     for (let i = 0; i < files.length; i++) {
       data.append("photos", files[i]);
     }
@@ -40,7 +41,9 @@ function PhotoUploader({ photos, onChange }) {
       .then((response) => {
         const { data: filename } = response;
         onChange((prev) => {
-          return [...prev, filename];
+          for (let ind = 0; ind < filename.length; ind++)
+            prev.push(filename[ind]);
+          return prev;
         });
       });
   }
@@ -64,15 +67,15 @@ function PhotoUploader({ photos, onChange }) {
 
       <div className="mt-2 grid gap-2 grid-cols-3 md:grid-cols-4 lg:grid-cols-6">
         {photos?.length > 0 &&
-          photos.map(link => (
-            <div key={link} className="flex h-32 relative">
+          photos.map((link, index) => (
+            <div key={index} className="flex h-32 relative">
               <img
                 src={`http://localhost:3000/static/uploads/${link}`}
                 alt={link}
                 className="rounded-2xl w-full object-cover"
               />
               <button
-                onClick={e => removePhoto(e, link)}
+                onClick={(e) => removePhoto(e, link)}
                 className="absolute bottom-1 right-1 cursor-pointer text-white bg-opacity-50 rounded-2xl bg-black py-2 px-3"
               >
                 <svg
@@ -91,7 +94,7 @@ function PhotoUploader({ photos, onChange }) {
                 </svg>
               </button>
               <button
-                onClick={e => selectAsMainPhoto(e, link)}
+                onClick={(e) => selectAsMainPhoto(e, link)}
                 className="absolute bottom-1 left-1 cursor-pointer text-white bg-opacity-50 rounded-2xl bg-black py-2 px-3"
               >
                 <svg
@@ -112,7 +115,12 @@ function PhotoUploader({ photos, onChange }) {
             </div>
           ))}
         <label className="h-32 cursor-pointer flex gap-1 justify-center items-center border bg-transparent rounded-2xl p-2 text-2xl text-gray-600 ">
-          <input onChange={uploadPhoto} type="file" className="hidden" />
+          <input
+            onChange={uploadPhoto}
+            type="file"
+            multiple={true}
+            className="hidden"
+          />
           <svg
             xmlns="http://www.w3.org/2000/svg"
             fill="none"

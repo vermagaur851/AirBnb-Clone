@@ -141,6 +141,7 @@ app.post("/places", async (req, res) => {
     checkIn,
     checkOut,
     maxGuests,
+    price
   } = req.body;
 
   jwt.verify(token, process.env.JWT_SECRET, {}, async (err, userData) => {
@@ -156,12 +157,13 @@ app.post("/places", async (req, res) => {
       checkIn,
       checkOut,
       maxGuests,
+      price
     });
     res.json(placeDocs);
   });
 });
 
-app.get("/places", async (req, res) => {
+app.get("/user-places", async (req, res) => {
   const { token } = req.cookies;
   jwt.verify(token, process.env.JWT_SECRET, {}, async (err, userData) => {
     if (err) throw err;
@@ -188,6 +190,7 @@ app.put("/places", async (req, res) => {
     checkIn,
     checkOut,
     maxGuests,
+    price
   } = req.body;
 
   jwt.verify(token, process.env.JWT_SECRET, {}, async (err, userData) => {
@@ -204,11 +207,17 @@ app.put("/places", async (req, res) => {
         perks,
         extraInfo,
         checkIn,
+        price
       });
       await placeDocs.save();
       res.json("ok");
     }
   });
 });
+
+app.get('/_places',async (req,res)=>{
+  const data = await PlaceModel.find();
+  res.json(data);
+})
 
 app.listen(port, () => console.log(`app is listening at port: ${port}!`));

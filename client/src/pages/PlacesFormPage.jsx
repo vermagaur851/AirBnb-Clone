@@ -17,6 +17,7 @@ function PlacesFormPage() {
   const [checkIn, setCheckIn] = useState("");
   const [checkOut, setCheckOut] = useState("");
   const [maxGuests, setMaxGuests] = useState(1);
+  const [price, setPrice] = useState(100);
   const [redirect, setRedirect] = useState(false);
 
   useEffect(() => {
@@ -34,6 +35,7 @@ function PlacesFormPage() {
         setCheckOut(data.checkOut);
         setCheckIn(data.checkIn);
         setMaxGuests(data.maxGuests);
+        setPrice(data.price);
       });
     }
   }, [id]);
@@ -67,20 +69,13 @@ function PlacesFormPage() {
       checkIn,
       checkOut,
       maxGuests,
+      price,
     };
     if (id) {
       // update
       await axios.put("/places", {
         id,
-        title,
-        address,
-        photos,
-        description,
-        perks,
-        extraInfo,
-        checkIn,
-        checkOut,
-        maxGuests,
+        ...placeData,
       });
       setRedirect(true);
     } else {
@@ -88,7 +83,6 @@ function PlacesFormPage() {
       await axios.post("/places", placeData);
       setRedirect(true);
     }
-    console.log(photos);
   }
 
   if (redirect) {
@@ -138,7 +132,7 @@ function PlacesFormPage() {
           "Check in&out time",
           "add check in and out times, remember to have time window for cleaning the room between guests"
         )}
-        <div className="grid gap-2 sm:grid-cols-3">
+        <div className="grid gap-2 sm:grid-cols-2 md:grid-cols-4">
           <div>
             <h3>Check in time</h3>
             <input
@@ -166,10 +160,21 @@ function PlacesFormPage() {
               type="number"
               placeholder="5"
               value={maxGuests}
-              onChange={(ev) =>{
+              onChange={(ev) => {
                 setMaxGuests(parseInt(ev.target.value));
-                console.log(maxGuests);
-              } }
+              }}
+            />
+          </div>
+          <div>
+            <h3>Price per Night</h3>
+            <input
+              className="mt-2 -mb-1 border border-gray-300 bg-gray-100"
+              type="number"
+              placeholder="5"
+              value={price}
+              onChange={(ev) => {
+                setPrice(parseInt(ev.target.value));
+              }}
             />
           </div>
         </div>

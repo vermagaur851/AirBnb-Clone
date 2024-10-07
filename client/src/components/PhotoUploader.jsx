@@ -11,13 +11,12 @@ function PhotoUploader({ photos, onChange }) {
       Link: photoLink,
     });
     onChange((prev) => {
-      for (let ind = 0; ind < filename.length; ind++) prev.push(filename[ind]);
-      return prev;
+      return [...prev, ...filename];
     });
     setPhotoLink("");
   }
 
-  async function removePhoto(e, filename) {
+  function removePhoto(e, filename) {
     e.preventDefault();
     onChange([...photos.filter((photo) => photo !== filename)]);
   }
@@ -36,14 +35,12 @@ function PhotoUploader({ photos, onChange }) {
     }
     await axios
       .post("/upload", data, {
-        headers: { "Content-type": "multipart/form-data" },
+        headers: { "Content-type": "multipart/form-data" }
       })
       .then((response) => {
         const { data: filename } = response;
         onChange((prev) => {
-          for (let ind = 0; ind < filename.length; ind++)
-            prev.push(filename[ind]);
-          return prev;
+          return [...prev, ...filename];
         });
       });
   }

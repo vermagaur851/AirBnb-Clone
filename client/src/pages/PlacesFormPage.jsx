@@ -70,7 +70,6 @@ function PlacesFormPage() {
     };
     if (id) {
       // update
-      console.log('photos');
       await axios.put("/places", {
         id,
         title,
@@ -86,10 +85,10 @@ function PlacesFormPage() {
       setRedirect(true);
     } else {
       // new place
-      console.log('videos');
       await axios.post("/places", placeData);
       setRedirect(true);
     }
+    console.log(photos);
   }
 
   if (redirect) {

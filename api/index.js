@@ -9,9 +9,10 @@ import { fileURLToPath } from "url";
 import jwt from "jsonwebtoken";
 import cookieParser from "cookie-parser";
 import imageDownloader from "image-downloader";
-import path from "path";
+import path, { resolve } from "path";
 import multer from "multer";
 import fs from "fs";
+import { BookingModel } from "./models/Booking.js";
 
 dotenv.config();
 
@@ -35,6 +36,20 @@ try {
   console.log("MongoDB connected");
 } catch (error) {
   console.log("MongoDB could not connect !!!");
+}
+
+function getUserDataFromReq(req) {
+  return new Promise((resolve, reject) => {
+    jwt.verify(
+      req.cookies.token,
+      process.env.JWT_SECRET,
+      {},
+      async (err, userData) => {
+        if (err) throw err;
+        resolve(userData);
+      }
+    );
+  });
 }
 
 app.post("/register", async (req, res) => {
@@ -141,7 +156,7 @@ app.post("/places", async (req, res) => {
     checkIn,
     checkOut,
     maxGuests,
-    price
+    price,
   } = req.body;
 
   jwt.verify(token, process.env.JWT_SECRET, {}, async (err, userData) => {
@@ -157,7 +172,7 @@ app.post("/places", async (req, res) => {
       checkIn,
       checkOut,
       maxGuests,
-      price
+      price,
     });
     res.json(placeDocs);
   });
@@ -174,7 +189,7 @@ app.get("/user-places", async (req, res) => {
 
 app.get("/places/:id", async (req, res) => {
   const { id } = req.params;
-  res.json(await PlaceModel.findById(id));
+  res.json(await PlaceModel.findById(id).populate("owner"));
 });
 
 app.put("/places", async (req, res) => {
@@ -190,7 +205,7 @@ app.put("/places", async (req, res) => {
     checkIn,
     checkOut,
     maxGuests,
-    price
+    price,
   } = req.body;
 
   jwt.verify(token, process.env.JWT_SECRET, {}, async (err, userData) => {
@@ -207,7 +222,7 @@ app.put("/places", async (req, res) => {
         perks,
         extraInfo,
         checkIn,
-        price
+        price,
       });
       await placeDocs.save();
       res.json("ok");
@@ -215,9 +230,36 @@ app.put("/places", async (req, res) => {
   });
 });
 
-app.get('/_places',async (req,res)=>{
-  const data = await PlaceModel.find();
+app.get("/_places", async (req, res) => {
+  const data = await PlaceModel.find().populate("owner");
   res.json(data);
-})
+});
+
+app.post("/bookings", async (req, res) => {
+  const userData = await getUserDataFromReq(req);
+  const { place, checkIn, checkOut, name, phone, numberofGuests, price } =
+    req.body;
+  BookingModel.create({
+    user: userData.id,
+    place,
+    checkIn,
+    checkOut,
+    name,
+    phone,
+    numberofGuests,
+    price,
+  })
+    .then((doc) => {
+      res.json(doc);
+    })
+    .catch((err) => {
+      throw err;
+    });
+});
+
+app.get("/bookings", async (req, res) => {
+  const userData = await getUserDataFromReq(req);
+  res.json(await BookingModel.find({ user: userData.id }).populate("place"));
+});
 
 app.listen(port, () => console.log(`app is listening at port: ${port}!`));

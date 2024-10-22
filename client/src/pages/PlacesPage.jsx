@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import AccountNav from "../components/AccountNav";
 import axios from "axios";
+import PlaceImg from "../components/PlaceImg";
 
 function PlacesPage() {
   const [places, setPlaces] = useState([]);
@@ -47,15 +48,7 @@ function PlacesPage() {
               className="cursor-pointer bg-gray-100 flex gap-4 p-4 rounded-2xl"
             >
               <div className="flex w-32 h-32 bg-gray-300 shrink-0">
-                {place.photos.length && (
-                  <img
-                    src={
-                      "http://localhost:3000/static/uploads" + place.photos[0]
-                    }
-                    alt="photos"
-                    className="object-cover"
-                  />
-                )}
+                <PlaceImg place={place} />
               </div>
               <div className="grow-0 shrink">
                 <h2 className="text-xl">{place.title}</h2>
